@@ -1,3 +1,6 @@
+argparse
 dotenv
 os
 requests
+sqlalchemy
+time

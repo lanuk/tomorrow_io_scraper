@@ -1,20 +1,39 @@
+from db_tools import connect_to_docker_db, connect_to_local_db, create_table, load_data
 from dotenv import load_dotenv
+from sqlalchemy import Column, Float, MetaData, Table, Text, TIMESTAMP
+import argparse
 import os
-import pandas as pd
 import requests
+import time
+
+# Adding test mode to run on local Postgres database
+parser = argparse.ArgumentParser()
+parser.add_argument("--local", action="store_true", help="output data to local Postgres database")
+args = parser.parse_args()
 
 locations = [
     {"lat":25.8600,"lon":-97.4200},
-    # {"lat":25.9000,"lon":-97.5200},
-    # {"lat":25.9000,"lon":-97.4800},
-    # {"lat":25.9000,"lon":-97.4400},
-    # {"lat":25.9000,"lon":-97.4000},
-    # {"lat":25.9200,"lon":-97.3800},
-    # {"lat":25.9400,"lon":-97.5400},
-    # {"lat":25.9400,"lon":-97.5200},
-    # {"lat":25.9400,"lon":-97.4800},
-    # {"lat":25.9400,"lon":-97.4400}
+    {"lat":25.9000,"lon":-97.5200},
+    {"lat":25.9000,"lon":-97.4800},
+    {"lat":25.9000,"lon":-97.4400},
+    {"lat":25.9000,"lon":-97.4000},
+    {"lat":25.9200,"lon":-97.3800},
+    {"lat":25.9400,"lon":-97.5400},
+    {"lat":25.9400,"lon":-97.5200},
+    {"lat":25.9400,"lon":-97.4800},
+    {"lat":25.9400,"lon":-97.4400}
 ]
+
+meta = MetaData()
+table = Table(
+    'weather', meta,
+    Column('time', TIMESTAMP, primary_key=True),
+    Column('lat', Float, primary_key=True),
+    Column('lon', Float, primary_key=True),
+    Column('temperature', Float),
+    Column('wind_speed', Float),
+    Column('metric_type', Text, primary_key=True)
+)
 
 load_dotenv()
 TOMORROW_IO_API_KEY = os.getenv('TOMORROW_IO_API_KEY')
@@ -44,12 +63,20 @@ def fetch_data_by_type(m):
         
         response = requests.get(endpoint, headers=headers)
         data = response.json()
-
+        
         for row in data["timelines"]["hourly"]:
-            row["metric_type"] = m
-            row["lat"] = location["lat"]
-            row["lon"] = location["lon"]
-            output.append(row)
+            row["values"]["metric_type"] = m
+            row["values"]["lat"] = location["lat"]
+            row["values"]["lon"] = location["lon"]
+            row["values"]["time"] = row["time"]
+            row["values"]["wind_speed"] = row["values"]["windSpeed"]
+
+            row_clean = {}
+            for c in ["lat", "lon", "metric_type", "wind_speed", "temperature", "time"]:
+                row_clean[c] = row["values"][c]
+            output.append(row_clean)
+
+        time.sleep(1) # to comply with the API rate limit
 
     return output
 
@@ -65,3 +92,12 @@ def get_all_data():
 
 if __name__ == "__main__":
     output = get_all_data()
+
+    # Connect to database
+    if args.local:
+        engine = connect_to_local_db()
+    else:
+        engine = connect_to_docker_db()
+
+    create_table(engine, table)
+    load_data(engine, table, output)
