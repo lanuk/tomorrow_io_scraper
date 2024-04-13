@@ -1,7 +1,7 @@
 version: "3.8"
 services:
-  db:
-    container_name: db
+  weather_db:
+    container_name: weather_db
     image: postgres
     ports:
       - "5432:5432"
@@ -19,14 +19,18 @@ services:
 
   pythonapp:
     build: .
+    env_file:
+      - path: ./.env
+        required: true
     depends_on:
-      db:
+      weather_db:
         condition: service_healthy
     environment:
-      DATABASE_HOST: db
-      DATABASE_NAME: mydatabase
-      DATABASE_USER: user
-      DATABASE_PASSWORD: password
+      API_KEY: ${TOMORROW_IO_API_KEY}
+      DB_HOST: weather_db
+      DB_NAME: mydatabase
+      DB_USER: user
+      DB_PW: password
 
 volumes:
   postgres_data:

@@ -1,15 +1,9 @@
-from db_tools import connect_to_docker_db, connect_to_local_db, create_table, load_data
-from dotenv import load_dotenv
+from db_tools import connect_to_db, create_table, load_data
+# from dotenv import load_dotenv
 from sqlalchemy import Column, Float, MetaData, Table, Text, TIMESTAMP
-import argparse
 import os
 import requests
 import time
-
-# Adding test mode to run on local Postgres database
-parser = argparse.ArgumentParser()
-parser.add_argument("--local", action="store_true", help="output data to local Postgres database")
-args = parser.parse_args()
 
 locations = [
     {"lat":25.8600,"lon":-97.4200},
@@ -35,8 +29,9 @@ table = Table(
     Column('metric_type', Text, primary_key=True)
 )
 
-load_dotenv()
-TOMORROW_IO_API_KEY = os.getenv('TOMORROW_IO_API_KEY')
+# load_dotenv()
+# TOMORROW_IO_API_KEY = os.getenv('TOMORROW_IO_API_KEY')
+TOMORROW_IO_API_KEY = os.environ['API_KEY']
 
 metric_types = {
     "historical": "https://api.tomorrow.io/v4/weather/history/recent?apikey=",
@@ -92,12 +87,10 @@ def get_all_data():
 
 if __name__ == "__main__":
     output = get_all_data()
-
+    print(TOMORROW_IO_API_KEY)
+    
     # Connect to database
-    if args.local:
-        engine = connect_to_local_db()
-    else:
-        engine = connect_to_docker_db()
+    engine = connect_to_db()
 
     create_table(engine, table)
     load_data(engine, table, output)

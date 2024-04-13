@@ -1,30 +1,12 @@
 from sqlalchemy import create_engine, insert, MetaData
 
-def connect_to_docker_db():
+def connect_to_db():
     print("Creating connection to db:", end=" ")
-    host = "db"
+    host = "weather_db"
     dbname = "mydatabase"
     user = "user"
     password = "password"
     port = "5432"
-    engine = create_engine(
-        f"postgresql://{user}:{password}@{host}:{port}/{dbname}")
-    print("Complete")
-    return engine
-
-
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-#                                                                             #
-#      For use when testing on local machine                                  #
-#                                                                             #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-def connect_to_local_db():
-    print("Creating connection to db:", end=" ")
-    host = "localhost"
-    dbname = "mydatabase"
-    user = "postgres"
-    password = "postgres"
-    port = "5431"
     engine = create_engine(
         f"postgresql://{user}:{password}@{host}:{port}/{dbname}")
     print("Complete")
