@@ -32,5 +32,23 @@ services:
       DB_USER: user
       DB_PW: password
 
+
+  jupyter:
+    image: jupyter/datascience-notebook
+    build:
+      context: .
+      dockerfile: Dockerfile_jupyter
+    env_file:
+      - path: ./.env
+        required: true
+    depends_on:
+      pythonapp:
+        condition: service_healthy
+    environment:
+      DB_HOST: weather_db
+      DB_NAME: mydatabase
+      DB_USER: user
+      DB_PW: password
+
 volumes:
   postgres_data:
