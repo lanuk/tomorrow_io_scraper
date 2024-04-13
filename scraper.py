@@ -1,14 +1,40 @@
+from dotenv import load_dotenv
+import os
+import pandas as pd
+import requests
 
-
-coordinates = [
-	{"lat":25.86,"long":-97.42},
-	{"lat":25.9,"long":-97.52},
-	{"lat":25.9,"long":-97.48},
-	{"lat":25.9,"long":-97.44},
-	{"lat":25.9,"long":-97.4},
-	{"lat":25.92,"long":-97.38},
-	{"lat":25.94,"long":-97.54},
-	{"lat":25.94,"long":-97.52},
-	{"lat":25.94,"long":-97.48},
-	{"lat":25.94,"long":-97.44}
+locations = [
+	{"lat":25.8600,"long":-97.4200},
+	{"lat":25.9000,"long":-97.5200},
+	{"lat":25.9000,"long":-97.4800},
+	{"lat":25.9000,"long":-97.4400},
+	{"lat":25.9000,"long":-97.4000},
+	{"lat":25.9200,"long":-97.3800},
+	{"lat":25.9400,"long":-97.5400},
+	{"lat":25.9400,"long":-97.5200},
+	{"lat":25.9400,"long":-97.4800},
+	{"lat":25.9400,"long":-97.4400}
 ]
+
+historical_endpoint = "https://api.tomorrow.io/v4/historical"
+forecast_endpoint = "https://api.tomorrow.io/v4/weather/forecast"
+
+load_dotenv()
+TOMORROW_IO_API_KEY = os.getenv('TOMORROW_IO_API_KEY')
+
+def fetch_weather_data():
+	for location in locations:
+		params = {
+			"location": f"{location['lat']},{location['long']}",
+			"units": "imperial",
+			"timesteps": "1h",
+			"fields": "temperature",
+
+		}
+		historical_response = requests.get(historical_endpoint, params=params)
+		data = historical_response.json()
+		print(data)
+
+
+if __name__ == "__main__":
+	fetch_weather_data()
