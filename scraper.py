@@ -4,72 +4,64 @@ import pandas as pd
 import requests
 
 locations = [
-    {"lat":25.8600,"long":-97.4200},
-    # {"lat":25.9000,"long":-97.5200},
-    # {"lat":25.9000,"long":-97.4800},
-    # {"lat":25.9000,"long":-97.4400},
-    # {"lat":25.9000,"long":-97.4000},
-    # {"lat":25.9200,"long":-97.3800},
-    # {"lat":25.9400,"long":-97.5400},
-    # {"lat":25.9400,"long":-97.5200},
-    # {"lat":25.9400,"long":-97.4800},
-    # {"lat":25.9400,"long":-97.4400}
+    {"lat":25.8600,"lon":-97.4200},
+    # {"lat":25.9000,"lon":-97.5200},
+    # {"lat":25.9000,"lon":-97.4800},
+    # {"lat":25.9000,"lon":-97.4400},
+    # {"lat":25.9000,"lon":-97.4000},
+    # {"lat":25.9200,"lon":-97.3800},
+    # {"lat":25.9400,"lon":-97.5400},
+    # {"lat":25.9400,"lon":-97.5200},
+    # {"lat":25.9400,"lon":-97.4800},
+    # {"lat":25.9400,"lon":-97.4400}
 ]
 
 load_dotenv()
 TOMORROW_IO_API_KEY = os.getenv('TOMORROW_IO_API_KEY')
 
-historical_endpoint = "https://api.tomorrow.io/v4/historical?apikey=" \
-                      + TOMORROW_IO_API_KEY
-forecast_endpoint = "https://api.tomorrow.io/v4/weather/forecast?apikey=" \
-                    + TOMORROW_IO_API_KEY
+metric_types = {
+    "historical": "https://api.tomorrow.io/v4/weather/history/recent?apikey=",
+    "forecast": "https://api.tomorrow.io/v4/weather/forecast?apikey="
+}
 
-def fetch_historical_data():
-    params = {
-        "units": "imperial",
-        "timesteps": ["1h"],
-        "fields": ["temperature"],
-        "startTime": "nowMinus5d",
-        "endTime": "now",
-    }
+params = {
+    "timesteps": "1h",
+    "units": "imperial"
+}
 
-    headers = {
-        "accept": "application/json",
-        "Accept-Encoding": "gzip",
-        "content-type": "application/json"
-    }
+headers = {
+    "accept": "application/json",
+}
 
+def fetch_data_by_type(m):
+    output = []
     for location in locations:
-        params["location"] = f"{location['lat']},{location['long']}"
+        params["location"] = f"{location['lat']},{location['lon']}"
 
-        response = requests.post(historical_endpoint, json=params, headers=headers)
-        print(response.text)
-
-
-def fetch_forecast_data():
-    params = {
-        "timesteps": "1h",
-        "units": "imperial",
-    }
-
-    headers = {
-        "accept": "application/json",
-    }
-
-    for location in locations:
-        params["location"] = f"{location['lat']},{location['long']}"
-
-        endpoint = forecast_endpoint + "&timesteps=" + params["timesteps"] \
-                   + "&location=" + params["location"] + "&units=" \
-                   + params["units"]
+        endpoint = metric_types[m] + TOMORROW_IO_API_KEY + "&timesteps=" \
+                   + params["timesteps"] + "&location=" + params["location"] \
+                   + "&units=" + params["units"]
         
         response = requests.get(endpoint, headers=headers)
         data = response.json()
-        print(data)
-        for row in data:
-            print(row)
+
+        for row in data["timelines"]["hourly"]:
+            row["metric_type"] = m
+            row["lat"] = location["lat"]
+            row["lon"] = location["lon"]
+            output.append(row)
+
+    return output
+
+
+def get_all_data():
+    output = []
+    for m in metric_types:
+        output_subset = fetch_data_by_type(m)
+        output.append(output_subset)
+
+    return output
 
 
 if __name__ == "__main__":
-    # fetch_historical_data()
-    fetch_forecast_data()
+    output = get_all_data()
