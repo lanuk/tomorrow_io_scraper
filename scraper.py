@@ -58,7 +58,7 @@ def get_all_data():
     output = []
     for m in metric_types:
         output_subset = fetch_data_by_type(m)
-        output.append(output_subset)
+        output.extend(output_subset)
 
     return output
 
