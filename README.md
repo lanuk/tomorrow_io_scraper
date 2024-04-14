@@ -10,7 +10,7 @@ I used the datascience Jupyter image to bring in packages such as pandas and sql
 
 ### How to Run:
 
-Before running, create a file called .env in the root folder (where docker-compose.yml is found). In the .env file, create a variable API_KEY and set it equal to your tomorrow.io api key, and then save the file:
+Before running, create a file called .env in the root folder (where docker-compose.yml is found). In the .env file, create a variable API_KEY and set it equal to your tomorrow.io API key, and then save the file. You can get an API key for [free](https://app.tomorrow.io/signup) if you don't already have one:
 
 ```
 API_KEY = "your_api_key_here"
