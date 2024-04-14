@@ -2,7 +2,7 @@ from db_tools import connect_to_db, create_table, load_data
 # from dotenv import load_dotenv
 from sqlalchemy import Column, Float, MetaData, Table, Text, TIMESTAMP
 import os
-import psycopg2
+# import psycopg2
 import requests
 import time
 

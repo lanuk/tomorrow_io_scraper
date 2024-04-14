@@ -18,7 +18,7 @@ services:
       POSTGRES_PASSWORD: password
 
   pythonapp:
-    build: .
+    build: ./scraper
     env_file:
       - path: .env
         required: true
@@ -40,12 +40,12 @@ services:
 
   jupyter:
     image: jupyter/datascience-notebook
-    build:
-      context: .
-      dockerfile: Dockerfile_jupyter
+    build: ./jupyter
     env_file:
       - path: .env
         required: true
+    ports:
+      - 8888:8888
     depends_on:
       pythonapp:
         condition: service_completed_successfully
