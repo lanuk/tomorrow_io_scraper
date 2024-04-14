@@ -1,8 +1,8 @@
-### Overview
+### Overview:
 
 This container pings TomorrowIO to pull historical (past 24 hours) and forecast (next 5 days) weather metrics for 10 selected locations. The container, once running, will pull these metrics at the beginning of each hour.
 
-### Stack
+### Stack:
 
 For the Python component, I used Python + Alpine. I chose Alpine as it was the least painful way of pulling in psycopg2, which was required to integrate with Postgres. SQLAlchemy was used as it's pretty agnostic of SQL flavor. It also made building the table more programatic, hopefully reducing the chances of user (aka me) error.
 
