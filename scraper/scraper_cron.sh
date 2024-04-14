@@ -1,5 +1,6 @@
 #!/bin/sh
 
+# https://pad.schlosser-ma.de/s/tMcArQWrM
 CRON_FILE=/scraper/scraper_cron
 
 crontab $CRON_FILE
