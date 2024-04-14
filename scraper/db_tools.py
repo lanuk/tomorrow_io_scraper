@@ -14,7 +14,7 @@ def connect_to_db():
 
 
 def create_table(engine, table):
-    table.drop(engine, checkfirst=True)
+    # table.drop(engine, checkfirst=True)
     table.create(engine, checkfirst=True)
 
 

@@ -1,3 +1,4 @@
 
 .env
 .DS_Store
+/jupyter/work/.ipynb_checkpoints
