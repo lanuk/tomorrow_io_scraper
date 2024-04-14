@@ -1,3 +1,6 @@
+### Overview
+This container pings TomorrowIO to pull historical (past 24 hours) and forecast (next 5 days) weather metrics for 10 selected locations. The container, once running, will pull these metrics at the beginning of each hour.
+
 ### How to Run:
 
 Before running, create a file called .env in the root folder (where docker-compose.yml is found). In the .env file, create a variable API_KEY and set it equal to your tomorrow.io api key, and then save the file:
@@ -22,5 +25,4 @@ Run only the notebook:
 docker-compose start jupyter
 
 ```
-Then navigate to http://127.0.0.1:8888/ from a browser.
-Open Notebook.ipynb, found in the work folder.
+Then navigate to http://127.0.0.1:8888/ from a browser. Open Notebook.ipynb, found in the work folder.
