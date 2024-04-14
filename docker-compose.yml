@@ -42,8 +42,6 @@ services:
     ports:
       - 8888:8888
     depends_on:
-      pythonapp:
-        condition: service_completed_successfully
       weather_db:
         condition: service_healthy
     volumes:
