@@ -1,12 +1,19 @@
-FROM python:3.10
+FROM python:3.10-alpine
 
 WORKDIR /scraper
 
-RUN apt-get update && apt-get install cron -y 
+RUN apk add build-base
+
+RUN apk update \
+  && apk add --virtual build-deps gcc python3-dev musl-dev \
+  && apk add postgresql-dev \
+  && pip install psycopg2 \
+  && apk del build-deps
 
 COPY . .
 
-RUN crontab ./crontab
+RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-CMD ["python", "scraper.py"]
+RUN chmod +x /scraper/scraper_cron.sh
+CMD ["/scraper/scraper_cron.sh"]

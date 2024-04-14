@@ -32,7 +32,6 @@ services:
       DB_USER: user
       DB_PW: password
 
-
   jupyter:
     image: jupyter/datascience-notebook
     build: ./jupyter
